@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Story.Suisse - Le Voyage sur la Lune</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- VARIABLES --- */
+      :root {
+        --navy: #0f172a;
+        --blue: #2563eb;
+        --white: #ffffff;
+        --grey: #f8fafc;
+        --border: #e2e8f0;
+      }
+
+      /* --- PREVIEW CONTAINER (Browser Only) --- */
+      body {
+        background-color: #e2e8f0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 40px;
+        gap: 40px;
+        font-family: "Outfit", sans-serif;
+      }
+
+      /* This simulates the A4 Page */
+      .page {
+        width: 210mm;
+        height: 297mm;
+        background: white;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        color: var(--navy);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* Grid Background Pattern */
+      .grid-bg {
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(var(--border) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border) 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.5;
+        z-index: 0;
+        pointer-events: none;
+      }
+
+      /* --- COVER PAGE --- */
+      .cover-page {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 60px;
+      }
+
+      .cover-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+      }
+
+      .brand-tag {
+        font-size: 12px;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: var(--navy);
+      }
+
+      .cover-content {
+        z-index: 10;
+        margin-top: 20px;
+      }
+
+      .meta-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        background: var(--navy);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+      }
+
+      .cover-title {
+        font-size: 64px;
+        font-weight: 900;
+        line-height: 0.9;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+        color: var(--navy);
+        margin-bottom: 40px;
+      }
+
+      .cover-image-container {
+        position: relative;
+        width: 100%;
+        height: 500px;
+        background: var(--grey);
+        border: 1px solid var(--navy);
+        padding: 10px;
+      }
+
+      .cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        filter: grayscale(20%) contrast(110%);
+      }
+
+      .cover-footer {
+        display: flex;
+        justify-content: space-between;
+        border-top: 2px solid var(--navy);
+        padding-top: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        z-index: 10;
+      }
+
+      /* --- STORY PAGES WITH DYNAMIC LAYOUTS --- */
+      .page-frame {
+        position: relative;
+        z-index: 10;
+        padding: 50px;
+        height: 100%;
+        display: block;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--navy);
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+      }
+
+      .brand {
+        font-size: 10px;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+      }
+
+      .page-num {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--blue);
+      }
+
+      /* --- DYNAMIC IMAGE STYLES --- */
+      .story-image-container {
+        position: relative;
+        background: white;
+        padding: 8px;
+        border: 1px solid var(--navy);
+        box-shadow: 8px 8px 0px rgba(15, 23, 42, 0.05);
+        margin-bottom: 25px;
+      }
+
+      .story-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* VARIANT 1: Large Image, Floated Right */
+      .layout-float-right-lg {
+        float: right;
+        width: 60%;
+        height: 400px;
+        margin-left: 40px;
+        margin-right: -20px;
+      }
+
+      /* VARIANT 2: Medium Image, Floated Left */
+      .layout-float-left-md {
+        float: left;
+        width: 45%;
+        height: 350px;
+        margin-right: 40px;
+        margin-left: -20px;
+      }
+
+      /* VARIANT 3: Full Width Top */
+      .layout-full-top {
+        width: 100%;
+        height: 350px;
+        float: none;
+        margin-bottom: 40px;
+      }
+
+      /* VARIANT 4: Small Square, Floated Right */
+      .layout-float-right-sm {
+        float: right;
+        width: 40%;
+        height: 300px;
+        margin-left: 40px;
+      }
+
+      /* --- TEXT TYPOGRAPHY --- */
+      .story-text p {
+        font-size: 14px;
+        line-height: 1.8;
+        text-align: justify;
+        margin-bottom: 16px;
+        color: #334155;
+      }
+
+      .story-text p:first-of-type {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--navy);
+        line-height: 1.5;
+      }
+
+      .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+      }
+
+      /* --- BACK PAGE (SPEC SHEET) --- */
+      .back-page {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 60px;
+      }
+
+      .back-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 10;
+        margin-bottom: 60px;
+      }
+
+      .back-content {
+        z-index: 10;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .spec-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        background: var(--navy);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+      }
+
+      .spec-title {
+        font-size: 48px;
+        font-weight: 900;
+        line-height: 1;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+        color: var(--navy);
+        margin-bottom: 60px;
+      }
+
+      .spec-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px 60px;
+        padding: 40px 0;
+        border-top: 2px solid var(--navy);
+        border-bottom: 2px solid var(--navy);
+      }
+
+      .spec-item {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .spec-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--blue);
+      }
+
+      .spec-value {
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--navy);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .back-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 2px solid var(--navy);
+        padding-top: 20px;
+        font-size: 9px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        z-index: 10;
+      }
+
+      .qr-section {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-top: 40px;
+      }
+
+      .qr-placeholder {
+        width: 120px;
+        height: 120px;
+        background: var(--navy);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 10px;
+        font-weight: bold;
+        letter-spacing: 0.1em;
+      }
+
+      .qr-text {
+        font-size: 11px;
+        line-height: 1.6;
+        color: #64748b;
+        max-width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- PAGE 1: COVER -->
+    <div class="page cover-page">
+      <div class="grid-bg"></div>
+
+      <div class="cover-header">
+        <div class="brand-tag">STORY.SUISSE</div>
+        <div class="brand-tag">VOL. 01</div>
+      </div>
+
+      <div class="cover-content">
+        <div class="meta-badge">POUR MOUMEN</div>
+        <h1 class="cover-title">LA RENCONTRE AVEC RONALDO</h1>
+
+        <div class="cover-image-container">
+          <img src="./images/story (1).png" class="cover-image" />
+        </div>
+      </div>
+
+      <div class="cover-footer">
+        <span>REF: 004921</span>
+        <span>EDITION LIMITÉE</span>
+      </div>
+    </div>
+
+    <!-- PAGE 2: LE DÉPART - Large Image Right -->
+    <div class="page">
+      <div class="grid-bg"></div>
+      <div class="page-frame clearfix">
+        <div class="page-header">
+          <span class="brand">STORY.SUISSE</span>
+          <span class="page-num">PAGE 01</span>
+        </div>
+
+        <div class="story-image-container layout-float-right-lg">
+          <img src="./images/story (1).png" class="story-image" />
+        </div>
+
+        <div class="story-text">
+          <p>
+            Moumen n'en croyait pas ses yeux. Là, devant lui, se tenait son
+            idole : Cristiano Ronaldo !
+          </p>
+          <p>
+            C'était une journée spéciale. Sa classe avait gagné un concours de
+            football et le prix était incroyable : une visite au musée du sport
+            avec une surprise mystère. Moumen portait fièrement son maillot
+            rouge et blanc, celui de son équipe préférée.
+          </p>
+          <p>
+            Quand il était entré dans la grande salle remplie de portraits de
+            champions, il avait d'abord pensé que c'était juste une visite
+            normale. Mais soudain, une porte s'était ouverte et... c'était lui !
+            Le vrai Cristiano Ronaldo, en chair et en os !
+          </p>
+          <p>
+            Ronaldo lui avait souri de ce sourire que Moumen avait vu mille fois
+            à la télévision. "Salut champion !" avait-il dit d'une voix
+            chaleureuse. Le cœur de Moumen battait si fort qu'il pouvait
+            l'entendre dans ses oreilles.
+          </p>
+          <p>
+            Autour d'eux, ses camarades de classe regardaient la scène avec
+            émerveillement. Les murs étaient décorés de photos de légendes du
+            football, mais pour Moumen, il n'y avait qu'une seule personne qui
+            comptait dans cette salle : son héros était juste là, devant lui.
+          </p>
+          <p>
+            "Tu aimes le football ?" demanda Ronaldo en s'agenouillant
+            légèrement pour être à la hauteur de Moumen. Le garçon hocha la tête
+            avec enthousiasme, trop ému pour parler. C'était le plus beau jour
+            de sa vie qui ne faisait que commencer.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: DANS L'ESPACE - Medium Image Left -->
+    <div class="page">
+      <div class="grid-bg"></div>
+      <div class="page-frame clearfix">
+        <div class="page-header">
+          <span class="brand">STORY.SUISSE</span>
+          <span class="page-num">PAGE 02</span>
+        </div>
+
+        <div class="story-image-container layout-float-left-md">
+          <img src="./images/story (2).png" class="story-image" />
+        </div>
+
+        <div class="story-text">
+          <p>
+            Ronaldo posa sa main sur l'épaule de Moumen. "Viens, je vais te
+            montrer quelque chose de spécial."
+          </p>
+          <p>
+            Ils marchèrent ensemble à travers les couloirs du musée. Moumen
+            essayait de ne pas trébucher tant il était nerveux. À chaque pas, il
+            se demandait si ce n'était pas un rêve. Ronaldo lui parla de son
+            enfance, de ses premiers matchs, de ses entraînements.
+          </p>
+          <p>
+            "Tu sais Moumen," dit Ronaldo en s'arrêtant devant une vitrine
+            remplie de ballons dorés, "quand j'avais ton âge, j'étais exactement
+            comme toi. Je rêvais de devenir footballeur professionnel. Les gens
+            me disaient que c'était impossible, mais j'ai continué à croire en
+            moi."
+          </p>
+          <p>
+            Moumen écoutait chaque mot avec attention. Ronaldo lui montra des
+            photos de lui enfant, jouant dans les rues de Madère. "Chaque jour,
+            je m'entraînais pendant des heures. Même quand j'étais fatigué, même
+            quand il pleuvait. Le secret, c'est la détermination et le travail."
+          </p>
+          <p>
+            Ils passèrent devant des trophées brillants, des maillots encadrés
+            de différentes équipes, des chaussures de football signées. Chaque
+            objet racontait une histoire de victoire, d'effort et de
+            persévérance.
+          </p>
+          <p>
+            "Tu vois tous ces trophées ?" demanda Ronaldo. "Chacun d'eux
+            représente des milliers d'heures d'entraînement, des moments
+            difficiles, mais aussi beaucoup de joie. Le football, c'est plus
+            qu'un jeu. C'est une passion, un mode de vie."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 4: L'ATTERRISSAGE - Full Width Top -->
+    <div class="page">
+      <div class="grid-bg"></div>
+      <div class="page-frame clearfix">
+        <div class="page-header">
+          <span class="brand">STORY.SUISSE</span>
+          <span class="page-num">PAGE 03</span>
+        </div>
+
+        <div class="story-image-container layout-full-top">
+          <img src="./images/story (3).png" class="story-image" />
+        </div>
+
+        <div class="story-text">
+          <p>
+            Ronaldo s'arrêta devant une grande porte. "Es-tu prêt pour un
+            entraînement spécial ?" demanda-t-il avec un clin d'œil.
+          </p>
+          <p>
+            La porte s'ouvrit sur un terrain d'entraînement privé. L'herbe était
+            parfaitement verte, les buts brillaient sous les lumières. Des
+            ballons étaient disposés en ligne, attendant d'être frappés. C'était
+            comme un rêve devenu réalité.
+          </p>
+          <p>
+            "Allez, viens !" l'encouragea Ronaldo. "Je vais te montrer quelques
+            techniques que j'utilise." Moumen courut sur le terrain, son cœur
+            rempli d'excitation. Ronaldo lui montra comment placer ses pieds,
+            comment frapper le ballon avec précision.
+          </p>
+          <p>
+            "Le plus important," expliqua Ronaldo en démontrant un tir puissant
+            qui fit vibrer le filet, "c'est la position du corps. Regarde mes
+            épaules, mes hanches, mon pied d'appui. Tout doit être aligné vers
+            la cible."
+          </p>
+          <p>
+            Moumen essaya. Son premier tir était timide, mais Ronaldo
+            l'encouragea. "Bien ! Maintenant, mets plus de force, ne doute pas
+            de toi !" Au deuxième essai, le ballon vola plus fort et plus droit.
+            Ronaldo applaudit.
+          </p>
+          <p>
+            Ils s'entraînèrent pendant une heure. Ronaldo lui apprit des
+            dribbles, des feintes, des passes précises. Chaque fois que Moumen
+            réussissait une technique, Ronaldo le félicitait avec enthousiasme.
+            "Tu as du talent, champion ! Continue comme ça !"
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: PREMIERS PAS - Small Image Right -->
+    <div class="page">
+      <div class="grid-bg"></div>
+      <div class="page-frame clearfix">
+        <div class="page-header">
+          <span class="brand">STORY.SUISSE</span>
+          <span class="page-num">PAGE 04</span>
+        </div>
+
+        <div class="story-image-container layout-float-right-sm">
+          <img src="./images/story (4).png" class="story-image" />
+        </div>
+
+        <div class="story-text">
+          <p>
+            Après l'entraînement, Ronaldo emmena Moumen dans une salle
+            extraordinaire : sa salle des trophées personnelle.
+          </p>
+          <p>
+            Les murs étaient couverts de peintures représentant ses plus grands
+            moments. Des coupes dorées brillaient sur des socles en bois. Des
+            ballons d'or, des médailles, des trophées de toutes tailles
+            témoignaient d'une carrière incroyable.
+          </p>
+          <p>
+            Au centre de la pièce se dressait une statue bleu turquoise d'un
+            joueur en pleine action. "C'est moi quand j'ai marqué mon 700ème
+            but," expliqua Ronaldo avec fierté. Moumen tournait sur lui-même,
+            essayant de tout voir en même temps.
+          </p>
+          <p>
+            Ronaldo se plaça au milieu de la pièce et écarta les bras dans une
+            pose triomphante, celle qu'il fait après chaque but. "Viens, fais
+            comme moi !" encouragea-t-il. Moumen, dans son maillot numéro 7,
+            écarta les bras à son tour, imitant son idole.
+          </p>
+          <p>
+            "Tu vois, Moumen," dit Ronaldo en gardant sa pose, "chaque trophée
+            ici représente un rêve réalisé. Mais ce qui compte le plus, ce n'est
+            pas les trophées. C'est le voyage, l'effort, la passion que tu mets
+            dans ce que tu fais."
+          </p>
+          <p>
+            Les yeux de Moumen brillaient de bonheur. Il était là, dans la salle
+            des trophées de Cristiano Ronaldo, bras écartés comme un champion. À
+            cet instant, il se sentait capable de tout accomplir. Les murs ornés
+            de fresques colorées semblaient raconter qu'avec du travail et de la
+            détermination, tous les rêves sont possibles.
+          </p>
+          <p>
+            Un photographe prit une photo de ce moment magique. Deux champions,
+            un grand et un petit, les bras ouverts vers l'avenir, entourés de
+            gloire et de possibilités infinies.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 6: LA DÉCOUVERTE - Large Image Right -->
+    <div class="page">
+      <div class="grid-bg"></div>
+      <div class="page-frame clearfix">
+        <div class="page-header">
+          <span class="brand">STORY.SUISSE</span>
+          <span class="page-num">PAGE 05</span>
+        </div>
+
+        <div class="story-image-container layout-float-right-lg">
+          <img src="./images/story (5).png" class="story-image" />
+        </div>
+
+        <div class="story-text">
+          <p>
+            Avant de partir, Ronaldo avait une dernière surprise pour Moumen. Il
+            disparut un instant et revint avec un cadeau emballé.
+          </p>
+          <p>
+            "Ouvre-le," dit Ronaldo avec un sourire mystérieux. Les mains
+            tremblantes d'excitation, Moumen déchira le papier. À l'intérieur se
+            trouvait un maillot officiel du Portugal avec le numéro 7 et la
+            signature de Ronaldo au marqueur argenté.
+          </p>
+          <p>
+            "C'est... c'est pour moi ?" balbutia Moumen, n'arrivant pas à croire
+            ce qui lui arrivait. Ronaldo hocha la tête. "Oui, champion. Et ce
+            n'est pas tout." Il sortit également une paire de chaussures de
+            football neuves, exactement de la taille de Moumen.
+          </p>
+          <p>
+            "Ces chaussures," expliqua Ronaldo en les lui tendant, "vont
+            t'accompagner dans tes entraînements. Chaque fois que tu les
+            porteras, souviens-toi de notre rencontre. Souviens-toi que les
+            grands rêves commencent par de petits pas."
+          </p>
+          <p>
+            Moumen serra le maillot contre son cœur. Des larmes de joie
+            coulaient sur ses joues. Ronaldo s'agenouilla à nouveau à sa hauteur
+            et posa ses mains sur les épaules du garçon. "Écoute-moi bien,
+            Moumen. Tu as quelque chose de spécial en toi. Je l'ai vu dans tes
+            yeux, dans ta façon de jouer."
+          </p>
+          <p>
+            "Le chemin sera long et parfois difficile," continua Ronaldo. "Il y
+            aura des moments où tu voudras abandonner. Mais n'oublie jamais
+            pourquoi tu as commencé à jouer au football. Pour la joie, pour la
+            passion, pour le plaisir de courir après un ballon avec tes amis."
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 7: LE RETOUR - Medium Image Left -->
+    <div class="page">
+      <div class="grid-bg"></div>
+      <div class="page-frame clearfix">
+        <div class="page-header">
+          <span class="brand">STORY.SUISSE</span>
+          <span class="page-num">PAGE 06</span>
+        </div>
+
+        <div class="story-image-container layout-float-left-md">
+          <img src="./images/story (1).png" class="story-image" />
+        </div>
+
+        <div class="story-text">
+          <p>
+            Le moment était venu de dire au revoir. Moumen ne voulait pas que
+            cette journée se termine, mais il savait que c'était l'heure.
+          </p>
+          <p>
+            Ronaldo l'accompagna jusqu'à la sortie où l'attendaient ses
+            camarades et son professeur. Tout le monde voulait des photos, des
+            autographes. Ronaldo prit le temps avec chacun, mais il garda un
+            moment spécial pour Moumen.
+          </p>
+          <p>
+            "Fais-moi une promesse," dit Ronaldo en serrant la main de Moumen.
+            "Promets-moi que tu ne laisseras jamais personne te dire que tu ne
+            peux pas réaliser tes rêves. Promets-moi que tu t'entraîneras dur,
+            que tu resteras humble, et que tu n'oublieras jamais d'où tu viens."
+          </p>
+          <p>
+            Moumen serra fort la main de son idole. "Je le promets, Cristiano.
+            Je m'entraînerai tous les jours. Et un jour, peut-être qu'on jouera
+            ensemble sur un vrai terrain !" Ronaldo sourit. "J'en suis sûr,
+            champion. J'en suis absolument sûr."
+          </p>
+          <p>
+            Dans le bus qui le ramena chez lui, Moumen regardait par la fenêtre,
+            son maillot signé sur les genoux, ses nouvelles chaussures dans un
+            sac à ses pieds. Les autres enfants parlaient avec excitation de
+            leur rencontre, mais Moumen était silencieux, perdu dans ses
+            pensées.
+          </p>
+          <p>
+            Ce jour avait changé sa vie. Ce n'était plus juste un rêve lointain
+            de devenir footballeur professionnel. C'était maintenant un objectif
+            réel, quelque chose pour lequel il allait se battre chaque jour.
+            Ronaldo lui avait montré que c'était possible, que les légendes
+            aussi avaient été des enfants avec des rêves.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 8: BACK PAGE (SPEC SHEET) -->
+    <div class="page back-page">
+      <div class="grid-bg"></div>
+
+      <div class="back-header">
+        <div class="brand-tag">STORY.SUISSE</div>
+        <div class="brand-tag">DETAILS</div>
+      </div>
+
+      <div class="back-content">
+        <div class="spec-badge">STORY CARD</div>
+        <h2 class="spec-title">SPÉCIFICATIONS<br />DU RÉCIT</h2>
+
+        <div class="spec-container">
+          <div class="spec-item">
+            <span class="spec-label">Titre</span>
+            <span class="spec-value">Le Voyage sur la Lune</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Héros</span>
+            <span class="spec-value">Léo</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Âge du héros</span>
+            <span class="spec-value">6 Ans</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Thème</span>
+            <span class="spec-value">Espace / Aventure</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Pages</span>
+            <span class="spec-value">6 Pages</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Format</span>
+            <span class="spec-value">Digital PDF</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Date de création</span>
+            <span class="spec-value">21 Novembre 2024</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-label">Référence</span>
+            <span class="spec-value">Ref: 004921</span>
+          </div>
+        </div>
+
+        <div class="qr-section">
+          <div class="qr-placeholder">QR CODE</div>
+          <div class="qr-text">
+            Scannez ce code pour accéder à plus d'histoires personnalisées et
+            créer votre propre aventure sur Story.Suisse
+          </div>
+        </div>
+      </div>
+
+      <div class="back-footer">
+        <span>© 2025 STORY PLATFORM SUISSE</span>
+        <span>DESIGNED IN ZURICH</span>
+        <span>ALL RIGHTS RESERVED</span>
+      </div>
+    </div>
+  </body>
+</html>
